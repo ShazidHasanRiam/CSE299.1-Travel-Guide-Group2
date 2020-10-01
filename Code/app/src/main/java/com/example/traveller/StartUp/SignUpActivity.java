@@ -2,13 +2,13 @@ package com.example.traveller.StartUp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.example.traveller.JavaClasses.NewUser;
 import com.example.traveller.MainActivity;
 import com.example.traveller.R;
@@ -24,7 +24,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.shobhitpuri.custombuttons.GoogleSignInButton;
 
@@ -37,27 +36,22 @@ public class SignUpActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private  String TAG = "SignUpActivity";
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private int RC_SIGN_IN = 1;
     private NewUser newUser;
-    private FirebaseDatabase database;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-
+    private ProgressDialog progressDialog;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_sign_up);
         mAuth = FirebaseAuth.getInstance();
-
-
-
-
         signInButton=findViewById(R.id.gsignin);
+
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -67,26 +61,27 @@ public class SignUpActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 signIn();
-
 
             }
         });
 
 
 
-
-
     }
 
    private void signIn() {
+       progressDialog = new ProgressDialog(SignUpActivity.this);
+       progressDialog.setTitle("We are setting up your profile.\nWait a moment.");
+       progressDialog.show();
+       progressDialog.setCancelable(false);
+
        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
        startActivityForResult(signInIntent, RC_SIGN_IN);
+
    }
 
 
@@ -124,7 +119,10 @@ public class SignUpActivity extends AppCompatActivity {
 
                             Toast.makeText(SignUpActivity.this,"signInWithCredential:success",Toast.LENGTH_LONG).show();
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
                             updateUI(user);
+
                         } else {
                             // If sign in fails, display a message to the user.
 
@@ -135,6 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
     }
 
     private void updateUI(FirebaseUser fUser){
@@ -160,12 +159,18 @@ public class SignUpActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Toast.makeText(SignUpActivity.this, "Successful!", Toast.LENGTH_LONG).show();
 
-                       startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-                        finish();
+                       /*startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                        finish();*/
+                       finish();
+                        progressDialog.dismiss();
+
                     } else {
                         //display a failure message
                         Toast.makeText(SignUpActivity.this,"Please try again",Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+
                     }
+
                 }
             });
 
@@ -176,15 +181,32 @@ public class SignUpActivity extends AppCompatActivity {
 
         }
 
+
     }
+
+
+
+
+
+
+
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user!=null){
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+
     }
+
     @Override
     public void onStop() {
         if (mAuthStateListener != null) {
@@ -192,4 +214,8 @@ public class SignUpActivity extends AppCompatActivity {
         }
         super.onStop();
     }
+
+
+
+
 }

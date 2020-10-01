@@ -20,20 +20,35 @@
         android:adjustViewBounds="true"
         app:auto_cycle="true"
         app:corner_radius="20"
-        app:delay="10"
+        app:delay="115"
         app:period="1000"
         app:placeholder="@drawable/sylhet"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/btnbookmark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/capsule_logout"
+            android:text="Add to bookmark"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"/>
     <TextView
         android:id="@+id/placename"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"/>
+        android:textSize="25sp"
+        android:layout_marginBottom="10dp"
+        />
 
     <TextView
         android:id="@+id/placedetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:textSize="16sp"
+        />
+
     </LinearLayout>
 
 </ScrollView>

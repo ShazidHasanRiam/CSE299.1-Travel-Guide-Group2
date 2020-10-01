@@ -1,10 +1,10 @@
 package com.example.traveller.JavaClasses;
 
-import android.net.Uri;
+
 
 public class NewUser {
     private String username,email,imageurl,activationdate;
-    private Uri image;
+
 
     public NewUser(String username, String email, String imageurl,String activationdate) {
         this.username = username;

@@ -19,8 +19,8 @@
     <de.hdodenhof.circleimageview.CircleImageView
 
         android:id="@+id/profilepic"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dp"
         android:src="@drawable/img_error"
@@ -63,7 +63,7 @@
         android:text="Log out"
         android:textColor="@color/white"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/capsule_logout"/>
 
     </RelativeLayout>

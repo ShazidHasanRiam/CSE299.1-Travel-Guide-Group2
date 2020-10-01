@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -46,13 +48,14 @@ public class Explore extends Fragment {
     private CircleImageView imageView;
     private FirebaseDatabase database;
     DatabaseReference databaseReference;
-    private RecyclerView recyclerView,recyclerView1;
+    private RecyclerView recyclerView,recyclerView1,recyclerView2;
     RecommendedPlacesPogo recommendedPlacesPogo;
     List<RecommendedPlaces> recommendedPlaces;
 
     AdpterPopularPlaces adpterPopularPlaces;
     List<PopularPlaces> popularPlaces;
     private String placeName,placeDetails,url,url1,url2;
+    private SearchView searchView;
 
 
 
@@ -62,17 +65,25 @@ public class Explore extends Fragment {
        View v=inflater.inflate(R.layout.fragment_explore, container, false);
        imageSlider=v.findViewById(R.id.image_slider);
        imageView=v.findViewById(R.id.profilepic);
+
+       searchView=v.findViewById(R.id.search_bar);
        //recyclerview1
        recyclerView=v.findViewById(R.id.recycle1);
        recyclerView.setHasFixedSize(true);
        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recommendedPlaces=new ArrayList<RecommendedPlaces>();
+       recommendedPlaces=new ArrayList<RecommendedPlaces>();
 
         recyclerView1=v.findViewById(R.id.recycle2);
         recyclerView1.setHasFixedSize(true);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
         recyclerView1.setLayoutManager(layoutManager);
        // recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        recyclerView2=v.findViewById(R.id.searchRecycler);
+        recyclerView2.setHasFixedSize(true);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
         popularPlaces=new ArrayList<PopularPlaces>();
 
@@ -144,6 +155,40 @@ public class Explore extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getActivity(),databaseError.getCode(),Toast.LENGTH_LONG).show();
 
+            }
+        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                if(!TextUtils.isEmpty(s.trim())){
+                    recyclerView2.setVisibility(View.VISIBLE);
+                    Toast.makeText(getActivity(),s,Toast.LENGTH_LONG).show();
+                    recyclerView2.setVisibility(View.VISIBLE);
+                    searchPlaces(s);
+
+                }else if(TextUtils.isEmpty(s.trim())){
+                    recyclerView2.setVisibility(View.GONE);
+
+
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(!TextUtils.isEmpty(s.trim())){
+                    searchPlaces(s);
+
+
+                }else if(TextUtils.isEmpty(s.trim())){
+                    recyclerView2.setVisibility(View.GONE);
+
+
+                }
+                return false;
             }
         });
 
@@ -263,4 +308,48 @@ public class Explore extends Fragment {
             }
         });
     }
+
+    private void searchPlaces(final String newText) {
+
+        final FirebaseUser fuser= FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference("AllPlaces");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                popularPlaces.clear();
+
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    PopularPlaces places=ds.getValue(PopularPlaces.class);
+
+
+                    if (places.getPlaceName().toLowerCase().contains(newText.toLowerCase())){
+                        popularPlaces.add(places);
+
+                    }
+
+
+
+
+                    adpterPopularPlaces=new AdpterPopularPlaces(getActivity(),popularPlaces);
+                    adpterPopularPlaces.notifyDataSetChanged();
+                    recyclerView2.setAdapter(adpterPopularPlaces);
+
+
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
 }

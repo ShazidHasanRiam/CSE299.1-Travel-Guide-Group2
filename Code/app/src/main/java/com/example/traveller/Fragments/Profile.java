@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,7 +96,9 @@ public class Profile extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mGoogleSignInClient.signOut();
+
+                FirebaseAuth.getInstance().signOut();
+                //mGoogleSignInClient.signOut();
                 Toast.makeText(getActivity(),"You are Logged Out",Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getActivity(), SignUpActivity.class));
                 getActivity().finish();

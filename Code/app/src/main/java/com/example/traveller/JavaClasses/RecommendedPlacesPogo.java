@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -44,6 +45,8 @@ public class RecommendedPlacesPogo extends RecyclerView.Adapter<RecommendedPlace
         final String placeImage1=recommendedPlaces.get(position).getImageUrl1();
         final String placeImage2=recommendedPlaces.get(position).getImageUrl2();
 
+
+
         try {
 
             Picasso.get().load(placeImage)
@@ -77,6 +80,7 @@ public class RecommendedPlacesPogo extends RecyclerView.Adapter<RecommendedPlace
 
     @Override
     public int getItemCount() {
+
         return recommendedPlaces.size();
     }
 
